@@ -24,6 +24,7 @@ const analyzeWallet = async (publicKey: PublicKey): Promise<ScoreCriteria> => {
   const smartContractInteractions = transactions.filter(
     (tx) => tx.err === null
   ).length;
+
   // Example
   const stakingActivities = accountInfo?.value ? 1 : 0; // Simplified example
 
