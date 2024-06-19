@@ -15,12 +15,10 @@ const SCORE_MULTIPLIERS = {
 };
 
 const analyzeWallet = async (publicKey: PublicKey): Promise<ScoreCriteria> => {
-  // Fetch transaction history, token balances, and account info for the wallet
   const transactions = await getTransactionHistory(publicKey);
   const tokenBalances = await getTokenBalances(publicKey);
   const accountInfo = await getAccountInfo(publicKey);
 
-  // Calculate score criteria based on the fetched data (simplified example)
   const transactionCount = transactions.length;
   const tokenBalance = tokenBalances.value.length;
   const smartContractInteractions = transactions.filter(
@@ -64,8 +62,8 @@ export const getAggregateWalletScore = async (
   const scores = await Promise.all(walletAddresses.map(getWalletScore));
   const aggregateScore =
     scores.reduce((acc, { score }) => acc + score, 0) / scores.length;
-  return scores.map((walletScore) => ({
-    ...walletScore,
-    score: aggregateScore,
-  }));
+
+  console.log(`Aggregate Score:`, aggregateScore);
+
+  return scores;
 };
