@@ -1,6 +1,7 @@
 import { TOKEN_PROGRAM_ID } from "@project-serum/anchor/dist/cjs/utils/token";
 import { Connection, PublicKey, clusterApiUrl } from "@solana/web3.js";
 
+// Create a connection to the Solana mainnet-beta cluster
 const connection = new Connection(clusterApiUrl("mainnet-beta"));
 
 export const getTransactionHistory = async (publicKey: PublicKey) => {

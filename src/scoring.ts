@@ -6,6 +6,7 @@ import {
 } from "./solana";
 import { ScoreCriteria, WalletScore } from "./types";
 
+// Define multipliers for different score criteria
 const SCORE_MULTIPLIERS = {
   transactionCount: 0.5,
   tokenBalance: 0.3,
@@ -14,19 +15,18 @@ const SCORE_MULTIPLIERS = {
 };
 
 const analyzeWallet = async (publicKey: PublicKey): Promise<ScoreCriteria> => {
+  // Fetch transaction history, token balances, and account info for the wallet
   const transactions = await getTransactionHistory(publicKey);
   const tokenBalances = await getTokenBalances(publicKey);
   const accountInfo = await getAccountInfo(publicKey);
 
-  // Simplified analysis logic
+  // Calculate score criteria based on the fetched data (simplified example)
   const transactionCount = transactions.length;
-  const tokenBalance = tokenBalances.value.length; // Simplified example
+  const tokenBalance = tokenBalances.value.length;
   const smartContractInteractions = transactions.filter(
     (tx) => tx.err === null
   ).length;
-
-  // Example
-  const stakingActivities = accountInfo?.value ? 1 : 0; // Simplified example
+  const stakingActivities = accountInfo?.value ? 1 : 0;
 
   return {
     transactionCount,
@@ -36,6 +36,7 @@ const analyzeWallet = async (publicKey: PublicKey): Promise<ScoreCriteria> => {
   };
 };
 
+// Function to calculate a score based on the score criteria
 const calculateScore = (criteria: ScoreCriteria): number => {
   return (
     criteria.transactionCount * SCORE_MULTIPLIERS.transactionCount +
@@ -46,6 +47,7 @@ const calculateScore = (criteria: ScoreCriteria): number => {
   );
 };
 
+// Function to get the score for a single wallet
 export const getWalletScore = async (
   walletAddress: string
 ): Promise<WalletScore> => {
@@ -55,6 +57,7 @@ export const getWalletScore = async (
   return { wallet: walletAddress, score };
 };
 
+// Function to get the aggregate score for multiple wallets
 export const getAggregateWalletScore = async (
   walletAddresses: string[]
 ): Promise<WalletScore[]> => {

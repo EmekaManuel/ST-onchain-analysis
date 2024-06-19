@@ -1,26 +1,43 @@
-import { getWalletScore } from "./scoring";
+import { getWalletScore, getAggregateWalletScore } from "./scoring";
+import readline from "readline";
 
-const walletAddress = "YOUR_WALLET_ADDRESS_HERE";
+// Create an interface for reading input from the command line
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+const promptWalletAddresses = (): Promise<string[]> => {
+  return new Promise((resolve) => {
+    rl.question("Enter wallet addresses separated by commas: ", (answer) => {
+      const walletAddresses = answer
+        .split(",")
+        .map((address) => address.trim());
+      resolve(walletAddresses);
+    });
+  });
+};
 
 (async () => {
   try {
-    const score = await getWalletScore(walletAddress);
-    console.log(`Wallet Score:`, score);
+    // Prompt the user for wallet addresses
+    const walletAddresses = await promptWalletAddresses();
+    rl.close();
+
+    // Check if only one wallet address was provided
+    if (walletAddresses.length === 1) {
+      const score = await getWalletScore(walletAddresses[0]);
+      console.log("This score is attributed to a single wallet");
+      console.log(`Wallet Score:`, score);
+    } else {
+      const aggregateScores = await getAggregateWalletScore(walletAddresses);
+      console.log(
+        `This score is attributed to ${walletAddresses.length} wallets`
+      );
+      console.log(`Aggregate Wallet Scores:`, aggregateScores);
+    }
   } catch (error) {
-    console.error("Error calculating wallet score:", error);
-  }
-})();
-
-// to handle multiple wallets, use this instead:
-import { getAggregateWalletScore } from "./scoring";
-
-const walletAddresses = ["WALLET_ADDRESS_1", "WALLET_ADDRESS_2"];
-
-(async () => {
-  try {
-    const aggregateScores = await getAggregateWalletScore(walletAddresses);
-    console.log(`Aggregate Wallet Scores:`, aggregateScores);
-  } catch (error) {
-    console.error("Error calculating aggregate wallet scores:", error);
+    console.error("Error calculating wallet scores:", error);
+    rl.close();
   }
 })();
